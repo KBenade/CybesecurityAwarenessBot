@@ -3,7 +3,7 @@ namespace CybersecurityBot;
 /// <summary>Contains the colour and layout rules for the console interface.</summary>
 internal sealed class ConsoleUi
 {
-    private const string Divider = "==============================================================";
+    private const string Divider = "==================================================================================";
 
     public void ShowBanner()
     {
@@ -16,17 +16,22 @@ internal sealed class ConsoleUi
             // Console.Clear is not supported when output is redirected.
         }
 
+        string logo = @"                                                                               
+                                                                               
+  ▄█████ ▄▄ ▄▄ ▄▄▄▄  ▄▄▄▄▄ ▄▄▄▄   ▄▄▄▄ ▄▄▄▄▄  ▄▄▄▄ ▄▄ ▄▄ ▄▄▄▄  ▄▄ ▄▄▄▄▄▄ ▄▄ ▄▄ 
+  ██     ▀███▀ ██▄██ ██▄▄  ██▄█▄ ███▄▄ ██▄▄  ██▀▀▀ ██ ██ ██▄█▄ ██   ██   ▀███▀ 
+  ▀█████   █   ██▄█▀ ██▄▄▄ ██ ██ ▄▄██▀ ██▄▄▄ ▀████ ▀███▀ ██ ██ ██   ██     █   
+                                                                               
+                                                                               
+                                                                               
+▄████▄ ▄▄   ▄▄  ▄▄▄  ▄▄▄▄  ▄▄▄▄▄ ▄▄  ▄▄ ▄▄▄▄▄  ▄▄▄▄  ▄▄▄▄   █████▄  ▄▄▄ ▄▄▄▄▄▄ 
+██▄▄██ ██ ▄ ██ ██▀██ ██▄█▄ ██▄▄  ███▄██ ██▄▄  ███▄▄ ███▄▄   ██▄▄██ ██▀██  ██   
+██  ██  ▀█▀█▀  ██▀██ ██ ██ ██▄▄▄ ██ ▀██ ██▄▄▄ ▄▄██▀ ▄▄██▀   ██▄▄█▀ ▀███▀  ██   
+                                                                               ";
         WriteLine(Divider, ConsoleColor.DarkCyan);
-        WriteLine("      CYBERSECURITY AWARENESS BOT", ConsoleColor.Cyan);
         WriteLine("          Stay alert. Stay safe online.", ConsoleColor.Gray);
         WriteLine(Divider, ConsoleColor.DarkCyan);
-        WriteLine("          .-''''-.     .-''''-.", ConsoleColor.DarkYellow);
-        WriteLine("         /  .--.  \\   /  .--.  \\", ConsoleColor.DarkYellow);
-        WriteLine("        |  /    \\  | |  /    \\  |", ConsoleColor.DarkYellow);
-        WriteLine("        | |  /\\  | | | |  /\\  | |", ConsoleColor.DarkYellow);
-        WriteLine("         \\  '--'  /   \\  '--'  /", ConsoleColor.DarkYellow);
-        WriteLine("          '-.____.-'     '-.____.-'", ConsoleColor.DarkYellow);
-        WriteLine("             [  SECURE  ]", ConsoleColor.Green);
+        Console.WriteLine(logo);
         WriteLine(Divider, ConsoleColor.DarkCyan);
         Console.WriteLine();
     }
