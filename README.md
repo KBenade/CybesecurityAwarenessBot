@@ -4,7 +4,7 @@ A Visual Studio C# console application that helps South African citizens practis
 
 ## Part 1 features
 
-- Plays a WAV asset at launch (replace the included placeholder with your own recorded spoken greeting before submission).
+- Plays a WAV asset at launch.
 - Displays a coloured ASCII cybersecurity banner.
 - Asks for the user's name and personalises the greeting.
 - Answers basic questions about password safety, phishing, and safe browsing.
