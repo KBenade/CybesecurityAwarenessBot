@@ -36,6 +36,6 @@ The GitHub Actions workflow in `.github/workflows/ci.yml` restores and builds th
 
 ## Submission checklist
 
-- Replace `Assets/welcome.wav` with your recorded spoken greeting, then commit the project source, WAV asset, this README, and the GitHub Actions workflow.
-- Make at least six meaningful commits, for example: project setup; banner; voice greeting; user interaction; chatbot responses; CI and documentation.
+- Replace `Assets/welcome.wav` with my own recorded spoken greeting, then commit the project source, WAV asset, this README, and the GitHub Actions workflow.
+- Make at least six meaningful commits
 - Record an unlisted YouTube walkthrough explaining the code structure, logic, voice greeting, and formatting.
