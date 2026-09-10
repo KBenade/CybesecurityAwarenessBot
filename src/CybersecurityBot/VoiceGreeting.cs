@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Media;
 
 namespace CybersecurityBot;
@@ -5,7 +7,7 @@ namespace CybersecurityBot;
 /// <summary>Plays the recorded WAV greeting when the application starts.</summary>
 internal sealed class VoiceGreeting
 {
-    private const string GreetingFileName = "welcome.wav";
+    private const string GreetingFileName = "GreetingVoice.wav";
 
     public void Play()
     {

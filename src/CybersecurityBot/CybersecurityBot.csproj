@@ -7,8 +7,14 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Assets\GreetingVoice.wav" />
+  </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Assets\GreetingVoice.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\welcome.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

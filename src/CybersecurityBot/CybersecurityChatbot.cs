@@ -86,7 +86,7 @@ internal sealed class CybersecurityChatbot
             return "Treat unexpected messages carefully. Check the sender and URL, do not open suspicious links or attachments, and verify requests through an official contact method.";
         }
 
-        if (question.Contains("browse", StringComparison.Ordinal) || question.Contains("website", StringComparison.Ordinal) || question.Contains("link", StringComparison.Ordinal))
+        if (question.Contains("browse", StringComparison.Ordinal) || question.Contains("website", StringComparison.Ordinal) || question.Contains("link", StringComparison.Ordinal) || question.Contains("browsing", StringComparison.Ordinal))
         {
             return "Browse safely by checking that a site's address is correct, avoiding unknown downloads, keeping software updated, and never entering sensitive details on a suspicious website.";
         }
