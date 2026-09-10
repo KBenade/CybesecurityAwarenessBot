@@ -13,7 +13,7 @@ A Visual Studio C# console application that helps South African citizens practis
 
 ## Run in Visual Studio
 
-1. Open `CybersecurityBot.sln` in **Visual Studio** (not Visual Studio Code).
+1. Open `CybersecurityBot.sln` in **Visual Studio**.
 2. Select the `CybersecurityBot` project as the startup project.
 3. Press `Ctrl+F5` to run without the debugger, or `F5` to debug.
 
@@ -33,9 +33,14 @@ Try these questions after entering your name:
 ## Continuous integration
 
 The GitHub Actions workflow in `.github/workflows/ci.yml` restores and builds the solution on every push and pull request. After pushing this repository to GitHub, the Actions tab will show each run.
-
+- Successful CI Workflow Run
+  <img width="1320" height="484" alt="Screenshot 2026-09-10 124318" src="https://github.com/user-attachments/assets/a9505703-30f6-417a-b755-e1783e986bba" />
+  
 ## Submission checklist
 
 - Replace `Assets/welcome.wav` with my own recorded spoken greeting, then commit the project source, WAV asset, this README, and the GitHub Actions workflow.
 - Make at least six meaningful commits
 - Record an unlisted YouTube walkthrough explaining the code structure, logic, voice greeting, and formatting.
+
+
+
