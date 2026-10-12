@@ -29,7 +29,7 @@ internal sealed class MainForm : Form
         };
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 172));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 118));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 142));
         Controls.Add(root);
 
         root.Controls.Add(BuildHeader(), 0, 0);
@@ -102,7 +102,7 @@ internal sealed class MainForm : Form
 
         copy.Controls.Add(new Label
         {
-            Text = "Ask about passwords, phishing, email scams, links, websites, and safer browsing habits.",
+            Text = "Ask about passwords, scams, privacy, phishing, links, websites, and safer browsing habits.",
             Dock = DockStyle.Fill,
             ForeColor = Color.FromArgb(212, 224, 230),
             Font = new Font("Segoe UI", 10.5F),
@@ -132,18 +132,20 @@ internal sealed class MainForm : Form
         };
         inputArea.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         inputArea.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
-        inputArea.RowStyles.Add(new RowStyle(SizeType.Absolute, 36));
+        inputArea.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));
         inputArea.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
         var quickActions = new FlowLayoutPanel
         {
             Dock = DockStyle.Fill,
             FlowDirection = FlowDirection.LeftToRight,
-            WrapContents = false,
+            WrapContents = true,
             BackColor = Color.Transparent
         };
         AddQuickAction(quickActions, "Help", "help");
         AddQuickAction(quickActions, "Passwords", "How can I make my passwords safer?");
+        AddQuickAction(quickActions, "Scams", "How can I avoid online scams?");
+        AddQuickAction(quickActions, "Privacy", "How can I protect my privacy online?");
         AddQuickAction(quickActions, "Phishing", "How do I spot phishing emails?");
         AddQuickAction(quickActions, "Safe browsing", "How can I browse safely?");
         inputArea.Controls.Add(quickActions, 0, 0);

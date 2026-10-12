@@ -4,6 +4,29 @@ namespace CybersecurityBot;
 internal sealed class CybersecurityChatbot
 {
     private readonly ChatbotProfile _profile = new();
+    private readonly List<KeywordResponse> _keywordResponses =
+    [
+        new(
+            ["password", "passphrase", "login", "credential"],
+            "Password safety",
+            "Use a different long passphrase for every account. A password manager can create and store strong passwords, and you should enable multi-factor authentication."),
+        new(
+            ["scam", "fraud", "fake", "con", "spoof"],
+            "Scam awareness",
+            "Scam messages often create urgency or ask for money, codes, or personal details. Pause, check the source, and confirm the request through an official website or phone number."),
+        new(
+            ["privacy", "personal information", "data", "tracking", "location"],
+            "Privacy protection",
+            "Protect your privacy by sharing less personal information online, reviewing app permissions, limiting location access, and using strong privacy settings on social media accounts."),
+        new(
+            ["phishing", "email", "attachment"],
+            "Phishing emails",
+            "Treat unexpected messages carefully. Check the sender and URL, do not open suspicious links or attachments, and verify requests through an official contact method."),
+        new(
+            ["browse", "website", "link", "browsing", "download"],
+            "Safe browsing",
+            "Browse safely by checking that a site's address is correct, avoiding unknown downloads, keeping software updated, and never entering sensitive details on a suspicious website.")
+    ];
 
     public string UserName => _profile.UserName;
 
@@ -23,7 +46,7 @@ internal sealed class CybersecurityChatbot
 
     public string GetIntroduction()
     {
-        return $"It is great to meet you, {_profile.UserName}! Ask about passwords, phishing, or safe browsing. Type 'help' for examples or 'exit' to leave.";
+        return $"It is great to meet you, {_profile.UserName}! Ask about passwords, scams, privacy, phishing, or safe browsing. Type 'help' for examples or 'exit' to leave.";
     }
 
     public string GetResponse(string input)
@@ -42,24 +65,25 @@ internal sealed class CybersecurityChatbot
 
         if (question.Contains("purpose", StringComparison.Ordinal) || question.Contains("what can i ask", StringComparison.Ordinal) || question == "help")
         {
-            return "My purpose is to raise cybersecurity awareness. You can ask me about password safety, phishing emails, or safe browsing.";
+            return "My purpose is to raise cybersecurity awareness. You can ask me about password safety, scams, privacy, phishing emails, or safe browsing.";
         }
 
-        if (question.Contains("password", StringComparison.Ordinal))
+        foreach (KeywordResponse keywordResponse in _keywordResponses)
         {
-            return "Use a different long passphrase for every account. A password manager can create and store strong passwords, and you should enable multi-factor authentication.";
+            if (keywordResponse.Matches(question))
+            {
+                return $"{keywordResponse.Topic}: {keywordResponse.Response}";
+            }
         }
 
-        if (question.Contains("phishing", StringComparison.Ordinal) || question.Contains("email", StringComparison.Ordinal) || question.Contains("scam", StringComparison.Ordinal))
+        return "I did not quite understand that. Could you rephrase, or ask about passwords, scams, privacy, phishing, or safe browsing?";
+    }
+
+    private sealed record KeywordResponse(IReadOnlyList<string> Keywords, string Topic, string Response)
+    {
+        public bool Matches(string question)
         {
-            return "Treat unexpected messages carefully. Check the sender and URL, do not open suspicious links or attachments, and verify requests through an official contact method.";
+            return Keywords.Any(keyword => question.Contains(keyword, StringComparison.Ordinal));
         }
-
-        if (question.Contains("browse", StringComparison.Ordinal) || question.Contains("website", StringComparison.Ordinal) || question.Contains("link", StringComparison.Ordinal) || question.Contains("browsing", StringComparison.Ordinal))
-        {
-            return "Browse safely by checking that a site's address is correct, avoiding unknown downloads, keeping software updated, and never entering sensitive details on a suspicious website.";
-        }
-
-        return "I did not quite understand that. Could you rephrase, or ask about passwords, phishing, or safe browsing?";
     }
 }
