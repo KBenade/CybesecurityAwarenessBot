@@ -3,67 +3,36 @@ namespace CybersecurityBot;
 /// <summary>Manages user input, validation, and cybersecurity responses.</summary>
 internal sealed class CybersecurityChatbot
 {
-    private readonly ConsoleUi _consoleUi;
     private readonly ChatbotProfile _profile = new();
 
-    public CybersecurityChatbot(ConsoleUi consoleUi)
+    public string UserName => _profile.UserName;
+
+    public bool HasUserName { get; private set; }
+
+    public void SetUserName(string name)
     {
-        _consoleUi = consoleUi;
+        string cleanName = name.Trim();
+        _profile.UserName = string.IsNullOrWhiteSpace(cleanName) ? "friend" : cleanName;
+        HasUserName = true;
     }
 
-    public void Run()
+    public string GetWelcomeMessage()
     {
-        _consoleUi.ShowSection("Welcome");
-        _consoleUi.WriteBotMessage("Hello! I am your Cybersecurity Awareness Bot. I am here to help you stay safe online.");
-        _profile.UserName = AskForName();
-        _consoleUi.WriteBotMessage($"It is great to meet you, {_profile.UserName}!");
-        _consoleUi.WriteBotMessage("Ask about passwords, phishing, or safe browsing. Type 'help' for examples or 'exit' to leave.");
-
-        while (true)
-        {
-            _consoleUi.WritePrompt(string.Empty);
-            string? input = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                _consoleUi.WriteError("Please enter a question or type 'help'.");
-                continue;
-            }
-
-            string response = GetResponse(input);
-            if (response == "__EXIT__")
-            {
-                _consoleUi.WriteBotMessage($"Goodbye, {_profile.UserName}. Remember: think before you click!");
-                return;
-            }
-
-            _consoleUi.WriteBotMessage(response);
-        }
+        return "Hello! I am your Cybersecurity Awareness Bot. I am here to help you stay safe online. What is your name?";
     }
 
-    private string AskForName()
+    public string GetIntroduction()
     {
-        while (true)
-        {
-            _consoleUi.WritePrompt("What is your name? ");
-            string? name = Console.ReadLine()?.Trim();
-
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                return name;
-            }
-
-            _consoleUi.WriteError("Your name cannot be empty. Please try again.");
-        }
+        return $"It is great to meet you, {_profile.UserName}! Ask about passwords, phishing, or safe browsing. Type 'help' for examples or 'exit' to leave.";
     }
 
-    private string GetResponse(string input)
+    public string GetResponse(string input)
     {
         string question = input.Trim().ToLowerInvariant();
 
         if (question is "exit" or "quit" or "bye")
         {
-            return "__EXIT__";
+            return $"Goodbye, {_profile.UserName}. Remember: think before you click!";
         }
 
         if (question.Contains("how are you", StringComparison.Ordinal))
@@ -91,7 +60,6 @@ internal sealed class CybersecurityChatbot
             return "Browse safely by checking that a site's address is correct, avoiding unknown downloads, keeping software updated, and never entering sensitive details on a suspicious website.";
         }
 
-        _consoleUi.WriteWarning("Unsupported question received.");
         return "I did not quite understand that. Could you rephrase, or ask about passwords, phishing, or safe browsing?";
     }
 }

@@ -31,7 +31,7 @@ internal sealed class ConsoleUi
         WriteLine(Divider, ConsoleColor.DarkCyan);
         WriteLine("          Stay alert. Stay safe online.", ConsoleColor.Gray);
         WriteLine(Divider, ConsoleColor.DarkCyan);
-        Console.WriteLine(logo);
+        WriteLine(logo, ConsoleColor.DarkGreen);
         WriteLine(Divider, ConsoleColor.DarkCyan);
         Console.WriteLine();
     }

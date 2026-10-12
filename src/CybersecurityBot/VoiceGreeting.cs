@@ -28,4 +28,9 @@ internal sealed class VoiceGreeting
             // The conversation remains usable if audio is unavailable on a device.
         }
     }
+
+    public void PlayAsync()
+    {
+        _ = Task.Run(Play);
+    }
 }
