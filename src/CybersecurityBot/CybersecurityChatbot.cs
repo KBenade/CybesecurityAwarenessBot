@@ -87,6 +87,17 @@ internal sealed class CybersecurityChatbot
             return "My purpose is to raise cybersecurity awareness. You can ask me about password safety, scams, privacy, phishing emails, or safe browsing.";
         }
 
+        string? sentimentResponse = GetSentimentResponse(question);
+        if (sentimentResponse is not null)
+        {
+            TryRememberFavouriteTopic(question, out _);
+            KeywordResponse? mentionedTopic = _keywordResponses.FirstOrDefault(response => response.Matches(question));
+            KeywordResponse topic = mentionedTopic ?? _currentTopic ?? _keywordResponses[0];
+            _currentTopic = topic;
+            string tip = GetTopicResponse(topic, avoidRepeat: mentionedTopic is null);
+            return $"{sentimentResponse} {tip}";
+        }
+
         if (TryRememberFavouriteTopic(question, out string? favouriteTopic))
         {
             return $"Great! I will remember that you are interested in {favouriteTopic}. It is an important part of staying safe online.";
@@ -164,6 +175,36 @@ internal sealed class CybersecurityChatbot
         _lastResponseIndex = null;
         favouriteTopic = topic.Topic.ToLowerInvariant();
         return true;
+    }
+
+    private static string? GetSentimentResponse(string question)
+    {
+        if (ContainsAny(question, "worried", "scared", "anxious", "afraid", "nervous"))
+        {
+            return "It is completely understandable to feel worried. Scams and online threats can be convincing, but a few careful steps can help you stay safe. Here is a tip:";
+        }
+
+        if (ContainsAny(question, "frustrated", "annoyed", "upset", "angry"))
+        {
+            return "I understand that this can be frustrating. We can take it one step at a time. Here is a practical tip:";
+        }
+
+        if (ContainsAny(question, "overwhelmed", "confused", "unsure", "uncertain", "don't understand", "do not understand"))
+        {
+            return "That can feel like a lot to deal with, but you do not have to solve everything at once. Here is one simple tip:";
+        }
+
+        if (ContainsAny(question, "curious", "interested", "wondering"))
+        {
+            return "Great question. Learning about online safety is a useful way to protect yourself. Here is a tip:";
+        }
+
+        return null;
+    }
+
+    private static bool ContainsAny(string text, params string[] phrases)
+    {
+        return phrases.Any(phrase => text.Contains(phrase, StringComparison.Ordinal));
     }
 
     private static bool IsFollowUp(string question)
