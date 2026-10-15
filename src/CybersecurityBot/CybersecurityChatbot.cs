@@ -4,6 +4,8 @@ namespace CybersecurityBot;
 internal sealed class CybersecurityChatbot
 {
     private readonly ChatbotProfile _profile = new();
+    private KeywordResponse? _currentTopic;
+    private int? _lastResponseIndex;
     private readonly List<KeywordResponse> _keywordResponses =
     [
         new(
@@ -85,16 +87,58 @@ internal sealed class CybersecurityChatbot
             return "My purpose is to raise cybersecurity awareness. You can ask me about password safety, scams, privacy, phishing emails, or safe browsing.";
         }
 
+        if (IsFollowUp(question))
+        {
+            if (_currentTopic is null)
+            {
+                return "I can explain more about passwords, scams, privacy, phishing, or safe browsing. Which topic would you like to explore?";
+            }
+
+            return GetTopicResponse(_currentTopic, avoidRepeat: true);
+        }
+
         foreach (KeywordResponse keywordResponse in _keywordResponses)
         {
             if (keywordResponse.Matches(question))
             {
-                string response = keywordResponse.Responses[Random.Shared.Next(keywordResponse.Responses.Count)];
-                return $"{keywordResponse.Topic}: {response}";
+                _currentTopic = keywordResponse;
+                return GetTopicResponse(keywordResponse, avoidRepeat: false);
             }
         }
 
         return "I did not quite understand that. Could you rephrase, or ask about passwords, scams, privacy, phishing, or safe browsing?";
+    }
+
+    private string GetTopicResponse(KeywordResponse topic, bool avoidRepeat)
+    {
+        int responseIndex;
+        if (avoidRepeat && topic.Responses.Count > 1 && _lastResponseIndex is int previousIndex)
+        {
+            responseIndex = Random.Shared.Next(topic.Responses.Count - 1);
+            if (responseIndex >= previousIndex)
+            {
+                responseIndex++;
+            }
+        }
+        else
+        {
+            responseIndex = Random.Shared.Next(topic.Responses.Count);
+        }
+
+        _lastResponseIndex = responseIndex;
+        return $"{topic.Topic}: {topic.Responses[responseIndex]}";
+    }
+
+    private static bool IsFollowUp(string question)
+    {
+        string[] followUpPhrases =
+        [
+            "another tip", "another one", "more tips", "tell me more", "explain more",
+            "more details", "give me more", "elaborate", "i am confused", "i'm confused",
+            "i do not understand", "i don't understand", "can you explain", "what do you mean"
+        ];
+
+        return followUpPhrases.Any(phrase => question.Contains(phrase, StringComparison.Ordinal));
     }
 
     private sealed record KeywordResponse(IReadOnlyList<string> Keywords, string Topic, IReadOnlyList<string> Responses)
