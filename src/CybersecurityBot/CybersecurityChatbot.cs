@@ -3,6 +3,17 @@ namespace CybersecurityBot;
 /// <summary>Manages user input, validation, and cybersecurity responses.</summary>
 internal sealed class CybersecurityChatbot
 {
+    private static readonly string[] FollowUpPhrases =
+    [
+        "another tip", "another one", "more tips", "tell me more", "explain more",
+        "more details", "give me more", "elaborate", "i am confused", "i'm confused",
+        "i do not understand", "i don't understand", "can you explain", "what do you mean"
+    ];
+    private static readonly string[] WorriedWords = ["worried", "scared", "anxious", "afraid", "nervous"];
+    private static readonly string[] FrustratedWords = ["frustrated", "annoyed", "upset", "angry"];
+    private static readonly string[] UncertainWords = ["overwhelmed", "confused", "unsure", "uncertain", "don't understand", "do not understand"];
+    private static readonly string[] CuriousWords = ["curious", "interested", "wondering"];
+
     private readonly ChatbotProfile _profile = new();
     private KeywordResponse? _currentTopic;
     private int? _lastResponseIndex;
@@ -68,9 +79,14 @@ internal sealed class CybersecurityChatbot
         return $"It is great to meet you, {_profile.UserName}! Ask about passwords, scams, privacy, phishing, or safe browsing. Type 'help' for examples or 'exit' to leave.";
     }
 
-    public string GetResponse(string input)
+    public string GetResponse(string? input)
     {
-        string question = input.Trim().ToLowerInvariant();
+        string question = input?.Trim().ToLowerInvariant() ?? string.Empty;
+
+        if (question.Length == 0)
+        {
+            return "I did not receive a message. Please enter a cybersecurity question, such as asking about phishing or passwords.";
+        }
 
         if (question is "exit" or "quit" or "bye")
         {
@@ -179,22 +195,22 @@ internal sealed class CybersecurityChatbot
 
     private static string? GetSentimentResponse(string question)
     {
-        if (ContainsAny(question, "worried", "scared", "anxious", "afraid", "nervous"))
+        if (ContainsAny(question, WorriedWords))
         {
             return "It is completely understandable to feel worried. Scams and online threats can be convincing, but a few careful steps can help you stay safe. Here is a tip:";
         }
 
-        if (ContainsAny(question, "frustrated", "annoyed", "upset", "angry"))
+        if (ContainsAny(question, FrustratedWords))
         {
             return "I understand that this can be frustrating. We can take it one step at a time. Here is a practical tip:";
         }
 
-        if (ContainsAny(question, "overwhelmed", "confused", "unsure", "uncertain", "don't understand", "do not understand"))
+        if (ContainsAny(question, UncertainWords))
         {
             return "That can feel like a lot to deal with, but you do not have to solve everything at once. Here is one simple tip:";
         }
 
-        if (ContainsAny(question, "curious", "interested", "wondering"))
+        if (ContainsAny(question, CuriousWords))
         {
             return "Great question. Learning about online safety is a useful way to protect yourself. Here is a tip:";
         }
@@ -202,21 +218,14 @@ internal sealed class CybersecurityChatbot
         return null;
     }
 
-    private static bool ContainsAny(string text, params string[] phrases)
+    private static bool ContainsAny(string text, IReadOnlyList<string> phrases)
     {
         return phrases.Any(phrase => text.Contains(phrase, StringComparison.Ordinal));
     }
 
     private static bool IsFollowUp(string question)
     {
-        string[] followUpPhrases =
-        [
-            "another tip", "another one", "more tips", "tell me more", "explain more",
-            "more details", "give me more", "elaborate", "i am confused", "i'm confused",
-            "i do not understand", "i don't understand", "can you explain", "what do you mean"
-        ];
-
-        return followUpPhrases.Any(phrase => question.Contains(phrase, StringComparison.Ordinal));
+        return FollowUpPhrases.Any(phrase => question.Contains(phrase, StringComparison.Ordinal));
     }
 
     private sealed record KeywordResponse(IReadOnlyList<string> Keywords, string Topic, IReadOnlyList<string> Responses)
