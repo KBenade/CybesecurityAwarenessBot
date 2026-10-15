@@ -87,6 +87,11 @@ internal sealed class CybersecurityChatbot
             return "My purpose is to raise cybersecurity awareness. You can ask me about password safety, scams, privacy, phishing emails, or safe browsing.";
         }
 
+        if (TryRememberFavouriteTopic(question, out string? favouriteTopic))
+        {
+            return $"Great! I will remember that you are interested in {favouriteTopic}. It is an important part of staying safe online.";
+        }
+
         if (IsFollowUp(question))
         {
             if (_currentTopic is null)
@@ -126,7 +131,39 @@ internal sealed class CybersecurityChatbot
         }
 
         _lastResponseIndex = responseIndex;
-        return $"{topic.Topic}: {topic.Responses[responseIndex]}";
+        string response = topic.Responses[responseIndex];
+        if (string.Equals(_profile.FavouriteTopic, topic.Topic, StringComparison.Ordinal))
+        {
+            return $"As someone interested in {topic.Topic.ToLowerInvariant()}, {char.ToLowerInvariant(response[0])}{response[1..]}";
+        }
+
+        return $"{topic.Topic}: {response}";
+    }
+
+    private bool TryRememberFavouriteTopic(string question, out string? favouriteTopic)
+    {
+        favouriteTopic = null;
+        bool expressesInterest = question.Contains("interested in", StringComparison.Ordinal)
+            || question.Contains("favourite topic", StringComparison.Ordinal)
+            || question.Contains("favorite topic", StringComparison.Ordinal)
+            || question.Contains("i like", StringComparison.Ordinal);
+
+        if (!expressesInterest)
+        {
+            return false;
+        }
+
+        KeywordResponse? topic = _keywordResponses.FirstOrDefault(response => response.Matches(question));
+        if (topic is null)
+        {
+            return false;
+        }
+
+        _profile.FavouriteTopic = topic.Topic;
+        _currentTopic = topic;
+        _lastResponseIndex = null;
+        favouriteTopic = topic.Topic.ToLowerInvariant();
+        return true;
     }
 
     private static bool IsFollowUp(string question)

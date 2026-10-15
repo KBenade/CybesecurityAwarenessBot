@@ -4,4 +4,6 @@ namespace CybersecurityBot;
 internal sealed class ChatbotProfile
 {
     public string UserName { get; set; } = "friend";
+
+    public string? FavouriteTopic { get; set; }
 }
