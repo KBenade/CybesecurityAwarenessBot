@@ -30,6 +30,12 @@ Try these questions after entering your name:
 - `How can I browse safely?`
 - `exit`
 
+## Part 3 Task 1: task assistant
+
+The **Tasks** button opens a task manager where you can add a title and description, optionally set a date and time reminder, view saved tasks, mark them complete or reopen them, and delete them. Tasks are stored in SQL Server LocalDB. The application creates the `CybersecurityBot` database and its `cybersecurity_tasks` table on first use.
+
+Install SQL Server Express LocalDB if it is not already available on your computer. The app uses the `(localdb)\\MSSQLLocalDB` instance with Windows authentication, so no MySQL server, connection string, or database password is needed. The Windows account running the app must be allowed to create a local database.
+
 ## Continuous integration
 
 The GitHub Actions workflow in `.github/workflows/ci.yml` restores and builds the solution on every push and pull request. After pushing this repository to GitHub, the Actions tab will show each run.

@@ -148,6 +148,13 @@ internal sealed class MainForm : Form
         AddQuickAction(quickActions, "Privacy", "How can I protect my privacy online?");
         AddQuickAction(quickActions, "Phishing", "How do I spot phishing emails?");
         AddQuickAction(quickActions, "Safe browsing", "How can I browse safely?");
+        var tasksButton = CreateCommandButton("Tasks", Color.FromArgb(79, 135, 116));
+        tasksButton.AutoSize = true;
+        tasksButton.MinimumSize = new Size(96, 30);
+        tasksButton.Height = 30;
+        tasksButton.Margin = new Padding(0, 0, 8, 0);
+        tasksButton.Click += (_, _) => OpenTaskManager();
+        quickActions.Controls.Add(tasksButton);
         inputArea.Controls.Add(quickActions, 0, 0);
 
         _statusLabel = new Label
@@ -243,6 +250,20 @@ internal sealed class MainForm : Form
         string response = _chatbot.GetResponse(message);
         AddBotMessage(response);
         _statusLabel.Text = "Response added";
+    }
+
+    private void OpenTaskManager()
+    {
+        try
+        {
+            using var taskManager = new TaskManagerForm();
+            taskManager.ShowDialog(this);
+        }
+        catch (Exception ex)
+        {
+            AddBotMessage($"I could not open the task assistant. {ex.Message}");
+            _statusLabel.Text = "Task assistant unavailable";
+        }
     }
 
     private void AddBotMessage(string message) => AddMessage("Bot", message, Color.FromArgb(35, 77, 71), Color.White, ContentAlignment.MiddleLeft);
