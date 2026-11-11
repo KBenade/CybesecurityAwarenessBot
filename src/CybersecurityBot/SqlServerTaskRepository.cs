@@ -72,15 +72,26 @@ internal sealed class SqlServerTaskRepository
         return tasks;
     }
 
-    public void Add(string title, string description, DateTime? reminderAt)
+    public int Add(string title, string description, DateTime? reminderAt)
     {
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
         using var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO dbo.cybersecurity_tasks (title, description, reminder_at) VALUES (@title, @description, @reminderAt)";
+        command.CommandText = "INSERT INTO dbo.cybersecurity_tasks (title, description, reminder_at) VALUES (@title, @description, @reminderAt); SELECT CAST(SCOPE_IDENTITY() AS int);";
         command.Parameters.Add("@title", System.Data.SqlDbType.NVarChar, 200).Value = title;
         command.Parameters.Add("@description", System.Data.SqlDbType.NVarChar, -1).Value = description;
         command.Parameters.Add("@reminderAt", System.Data.SqlDbType.DateTime2).Value = reminderAt is null ? DBNull.Value : reminderAt.Value;
+        return Convert.ToInt32(command.ExecuteScalar());
+    }
+
+    public void SetReminder(int id, DateTime reminderAt)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "UPDATE dbo.cybersecurity_tasks SET reminder_at = @reminderAt WHERE id = @id";
+        command.Parameters.Add("@reminderAt", System.Data.SqlDbType.DateTime2).Value = reminderAt;
+        command.Parameters.Add("@id", System.Data.SqlDbType.Int).Value = id;
         command.ExecuteNonQuery();
     }
 

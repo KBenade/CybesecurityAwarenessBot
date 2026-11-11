@@ -20,28 +20,28 @@ internal sealed class CybersecurityChatbot
     private readonly List<KeywordResponse> _keywordResponses =
     [
         new(
-            ["password", "passphrase", "login", "credential"],
+            ["password", "passphrase", "login", "credential", "two-factor authentication", "multi-factor authentication", "mfa", "2fa", "account security"],
             "Password safety",
             [
                 "Use a different long passphrase for every account. A password manager can create and store strong passwords, and you should enable multi-factor authentication.",
                 "Make each password long and unique. A password manager helps you avoid reusing passwords, and multi-factor authentication adds another layer of protection."
             ]),
         new(
-            ["scam", "fraud", "fake", "con", "spoof"],
+            ["scam", "fraud", "fake", "con", "spoof", "social engineering", "impersonation", "urgent payment"],
             "Scam awareness",
             [
                 "Scam messages often create urgency or ask for money, codes, or personal details. Pause, check the source, and confirm the request through an official website or phone number.",
                 "Be wary of unexpected requests for payment, verification codes, or personal information. Contact the organisation using details you find independently."
             ]),
         new(
-            ["privacy", "personal information", "data", "tracking", "location"],
+            ["privacy", "personal information", "data", "tracking", "location", "app permission", "permissions"],
             "Privacy protection",
             [
                 "Protect your privacy by sharing less personal information online, reviewing app permissions, limiting location access, and using strong privacy settings on social media accounts.",
                 "Review what personal details you share and which apps can access your location, camera, and contacts. Turn off permissions an app does not need."
             ]),
         new(
-            ["phishing", "email", "attachment"],
+            ["phishing", "email", "attachment", "suspicious message", "suspicious email"],
             "Phishing emails",
             [
                 "Treat unexpected messages carefully. Check the sender and URL, do not open suspicious links or attachments, and verify requests through an official contact method.",
@@ -50,7 +50,7 @@ internal sealed class CybersecurityChatbot
                 "Unexpected attachments can contain malware. Confirm with the sender using a known contact method before opening an attachment you were not expecting."
             ]),
         new(
-            ["browse", "website", "link", "browsing", "download"],
+            ["browse", "website", "link", "browsing", "download", "public wifi", "public wi-fi"],
             "Safe browsing",
             [
                 "Browse safely by checking that a site's address is correct, avoiding unknown downloads, keeping software updated, and never entering sensitive details on a suspicious website.",
@@ -76,12 +76,12 @@ internal sealed class CybersecurityChatbot
 
     public string GetIntroduction()
     {
-        return $"It is great to meet you, {_profile.UserName}! Ask about passwords, scams, privacy, phishing, or safe browsing. Type 'help' for examples or 'exit' to leave.";
+        return $"It is great to meet you, {_profile.UserName}! Ask about passwords, scams, privacy, phishing, or safe browsing. You can also ask me to add a task, set a reminder, start a quiz, or summarize recent actions. Type 'help' for examples or 'exit' to leave.";
     }
 
     public string GetResponse(string? input)
     {
-        string question = input?.Trim().ToLowerInvariant() ?? string.Empty;
+        string question = NaturalLanguageProcessor.NormalizeInput(input ?? string.Empty);
 
         if (question.Length == 0)
         {
@@ -100,7 +100,7 @@ internal sealed class CybersecurityChatbot
 
         if (question.Contains("purpose", StringComparison.Ordinal) || question.Contains("what can i ask", StringComparison.Ordinal) || question == "help")
         {
-            return "My purpose is to raise cybersecurity awareness. You can ask me about password safety, scams, privacy, phishing emails, or safe browsing.";
+            return "My purpose is to raise cybersecurity awareness. Ask about password safety, scams, privacy, phishing, or safe browsing; say 'add a task to enable 2FA', 'remind me to update my password tomorrow', 'quiz me', or 'what have you done for me?' to try the other features.";
         }
 
         string? sentimentResponse = GetSentimentResponse(question);

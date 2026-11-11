@@ -5,8 +5,13 @@ namespace CybersecurityBot;
 internal sealed class MainForm : Form
 {
     private readonly CybersecurityChatbot _chatbot = new();
+    private readonly NaturalLanguageProcessor _nlp = new();
     private readonly VoiceGreeting _voiceGreeting = new();
     private readonly FlowLayoutPanel _conversationPanel;
+    private readonly List<string> _recentActions = [];
+    private SqlServerTaskRepository? _taskRepository;
+    private int? _pendingReminderTaskId;
+    private string? _pendingReminderTitle;
     private TextBox _messageInput = null!;
     private Button _sendButton = null!;
     private Label _statusLabel = null!;
@@ -254,9 +259,147 @@ internal sealed class MainForm : Form
             return;
         }
 
+        if (TryHandleNlpRequest(message))
+        {
+            return;
+        }
+
         string response = _chatbot.GetResponse(message);
         AddBotMessage(response);
         _statusLabel.Text = "Response added";
+    }
+
+    private bool TryHandleNlpRequest(string message)
+    {
+        if (_nlp.IsActivitySummaryRequest(message))
+        {
+            string summary = _recentActions.Count == 0
+                ? "I have not added a task, set a reminder, or started a quiz in this chat yet."
+                : "Here is a summary of recent actions:\n" + string.Join("\n", _recentActions.TakeLast(10).Select((action, index) => $"{index + 1}. {action}"));
+            AddBotMessage(summary);
+            _statusLabel.Text = "Activity summary";
+            return true;
+        }
+
+        if (_nlp.IsQuizRequest(message))
+        {
+            AddBotMessage("Starting the cybersecurity quiz. Answer each question to see your score and feedback.");
+            RecordAction("Cybersecurity quiz started.");
+            OpenQuiz();
+            _statusLabel.Text = "Quiz opened";
+            return true;
+        }
+
+        if (_pendingReminderTaskId is not null && TryHandleReminderFollowUp(message))
+        {
+            return true;
+        }
+
+        if (_nlp.TryParseTaskRequest(message, out ParsedTaskRequest? request) && request is not null)
+        {
+            SaveChatTask(request);
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryHandleReminderFollowUp(string message)
+    {
+        string normalized = message.Trim().ToLowerInvariant().TrimEnd('.', '!', '?', ',');
+        if (normalized is "no" or "no thanks" or "no thank you" or "skip" or "not now" or "without a reminder")
+        {
+            string title = _pendingReminderTitle ?? "your task";
+            ClearPendingReminder();
+            AddBotMessage($"No reminder set for '{title}'. The task is saved and you can manage it with the Tasks button.");
+            RecordAction($"Task saved without a reminder: {title}.");
+            return true;
+        }
+
+        if (normalized is "yes" or "yes please" or "sure" or "okay" or "ok" or "please")
+        {
+            AddBotMessage("When should I remind you? Try 'tomorrow', 'in 3 days', or 'next week'.");
+            return true;
+        }
+
+        if (NaturalLanguageProcessor.TryParseReminderDate(message, out DateTime reminderAt))
+        {
+            string title = _pendingReminderTitle ?? "your task";
+            try
+            {
+                _taskRepository!.SetReminder(_pendingReminderTaskId!.Value, reminderAt);
+                ClearPendingReminder();
+                string time = reminderAt.ToString("dddd d MMMM 'at' h:mm tt");
+                AddBotMessage($"Reminder set for '{title}' on {time}.");
+                RecordAction($"Reminder set for '{title}' on {time}.");
+            }
+            catch (Exception ex)
+            {
+                ClearPendingReminder();
+                AddBotMessage($"The task was saved, but I could not set its reminder. {ex.Message}");
+            }
+
+            return true;
+        }
+
+        if (_nlp.TryParseTaskRequest(message, out _))
+        {
+            ClearPendingReminder();
+            return false;
+        }
+
+        AddBotMessage("I am waiting for a reminder time. Say 'tomorrow', 'in 3 days', 'yes' to choose a time, or 'no' to skip it.");
+        return true;
+    }
+
+    private void SaveChatTask(ParsedTaskRequest request)
+    {
+        try
+        {
+            SqlServerTaskRepository repository = GetTaskRepository();
+            int taskId = repository.Add(request.Title, $"Cybersecurity task: {request.Title}.", request.ReminderAt);
+            RecordAction($"Task added: {request.Title}.");
+
+            if (request.ReminderAt is DateTime reminderAt)
+            {
+                string time = reminderAt.ToString("dddd d MMMM 'at' h:mm tt");
+                AddBotMessage($"Task added: '{request.Title}'. Reminder set for {time}.");
+                RecordAction($"Reminder set for '{request.Title}' on {time}.");
+            }
+            else
+            {
+                _pendingReminderTaskId = taskId;
+                _pendingReminderTitle = request.Title;
+                AddBotMessage($"Task added: '{request.Title}'. Would you like to set a reminder? Say 'tomorrow', 'in 3 days', or 'no'.");
+            }
+
+            _statusLabel.Text = "Task added from chat";
+        }
+        catch (Exception ex)
+        {
+            AddBotMessage($"I understood that as a task request, but could not save it. {ex.Message}");
+            _statusLabel.Text = "Task could not be saved";
+        }
+    }
+
+    private SqlServerTaskRepository GetTaskRepository()
+    {
+        if (_taskRepository is not null) return _taskRepository;
+        _taskRepository = new SqlServerTaskRepository();
+        _taskRepository.EnsureCreated();
+        return _taskRepository;
+    }
+
+    private void ClearPendingReminder()
+    {
+        _pendingReminderTaskId = null;
+        _pendingReminderTitle = null;
+    }
+
+    private void RecordAction(string action)
+    {
+        _recentActions.Add(action);
+        if (_recentActions.Count > 10) _recentActions.RemoveAt(0);
     }
 
     private void OpenTaskManager()

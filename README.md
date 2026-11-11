@@ -47,6 +47,10 @@ Install SQL Server Express LocalDB if it is not already available on your comput
 
 Click **Quiz** in the chatbot to start a 12-question quiz. Questions cover phishing, passwords, safe browsing, multi-factor authentication, privacy, social engineering, public Wi-Fi, and device updates. Multiple-choice and true/false questions appear one at a time. Each answer receives immediate feedback with an explanation, followed by a final score and performance message. Choose **Play again** to restart.
 
+## Part 3 Task 3: NLP simulation
+
+The chat input uses basic NLP simulation with text normalization, keyword and phrase matching, and regular expressions for flexible task/reminder requests and reminder timeframes. Try `Remind me to update my password tomorrow`, `Add a task to enable 2FA`, `in 3 days`, `quiz me`, or `What have you done for me?`. Task requests are saved to SQL Server LocalDB, reminder replies update the saved task, quiz phrases open the mini-game, and recent chatbot actions are summarized in the conversation. This is rule-based string processing, not a trained language model.
+
 ## Continuous integration
 
 The GitHub Actions workflow in `.github/workflows/ci.yml` restores and builds the solution on every push and pull request. After pushing this repository to GitHub, the Actions tab will show each run.
