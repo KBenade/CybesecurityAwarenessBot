@@ -11,6 +11,13 @@ A Visual Studio C# console application that helps South African citizens practis
 - Validates empty and unsupported inputs with helpful feedback.
 - Uses separate classes for UI, audio, profile data, and chatbot logic.
 
+## Part 2 features
+- Random: The chatbot stores several responses for common cybersecurity topics and randomly selects one.
+- Conversational flow: It remembers the current topic and handles follow-ups such as "tell me more", "give me another tip", and "I'm confused" without restarting the conversation.
+- Memory and recall: It remembers the user's favorite cybersecurity topic when they express interest, then personalizes later responses about the topic.
+- Sentiment detection: It recognizes simple sentiment words such as "worried", "curious", "frustrated" and "overwhelmed". it responds supportively and shares a relevant tip in the same reply.
+- Error handling and code organization: It handles blank or null input with a helpful prompt and gives a rephrasing suggestion for unknown messages. Responses are organized using lists, arrays, and a response class reusable phrase lists are stored as static fields.
+
 ## Run in Visual Studio
 
 1. Open `CybersecurityBot.sln` in **Visual Studio**.
