@@ -43,6 +43,10 @@ The **Tasks** button opens a task manager where you can add a title and descript
 
 Install SQL Server Express LocalDB if it is not already available on your computer. The app uses the `(localdb)\\MSSQLLocalDB` instance with Windows authentication, so no MySQL server, connection string, or database password is needed. The Windows account running the app must be allowed to create a local database.
 
+## Part 3 Task 2: cybersecurity mini-game
+
+Click **Quiz** in the chatbot to start a 12-question quiz. Questions cover phishing, passwords, safe browsing, multi-factor authentication, privacy, social engineering, public Wi-Fi, and device updates. Multiple-choice and true/false questions appear one at a time. Each answer receives immediate feedback with an explanation, followed by a final score and performance message. Choose **Play again** to restart.
+
 ## Continuous integration
 
 The GitHub Actions workflow in `.github/workflows/ci.yml` restores and builds the solution on every push and pull request. After pushing this repository to GitHub, the Actions tab will show each run.

@@ -29,7 +29,7 @@ internal sealed class MainForm : Form
         };
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 172));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 142));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 156));
         Controls.Add(root);
 
         root.Controls.Add(BuildHeader(), 0, 0);
@@ -132,7 +132,7 @@ internal sealed class MainForm : Form
         };
         inputArea.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         inputArea.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
-        inputArea.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));
+        inputArea.RowStyles.Add(new RowStyle(SizeType.Absolute, 74));
         inputArea.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
         var quickActions = new FlowLayoutPanel
@@ -155,6 +155,13 @@ internal sealed class MainForm : Form
         tasksButton.Margin = new Padding(0, 0, 8, 0);
         tasksButton.Click += (_, _) => OpenTaskManager();
         quickActions.Controls.Add(tasksButton);
+        var quizButton = CreateCommandButton("Quiz", Color.FromArgb(116, 92, 156));
+        quizButton.AutoSize = true;
+        quizButton.MinimumSize = new Size(96, 30);
+        quizButton.Height = 30;
+        quizButton.Margin = new Padding(0, 0, 8, 0);
+        quizButton.Click += (_, _) => OpenQuiz();
+        quickActions.Controls.Add(quizButton);
         inputArea.Controls.Add(quickActions, 0, 0);
 
         _statusLabel = new Label
@@ -264,6 +271,12 @@ internal sealed class MainForm : Form
             AddBotMessage($"I could not open the task assistant. {ex.Message}");
             _statusLabel.Text = "Task assistant unavailable";
         }
+    }
+
+    private void OpenQuiz()
+    {
+        using var quiz = new CybersecurityQuizForm();
+        quiz.ShowDialog(this);
     }
 
     private void AddBotMessage(string message) => AddMessage("Bot", message, Color.FromArgb(35, 77, 71), Color.White, ContentAlignment.MiddleLeft);
