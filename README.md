@@ -41,15 +41,13 @@ Try these questions after entering your name:
 
 The **Tasks** button opens a task manager where you can add a title and description, optionally set a date and time reminder, view saved tasks, mark them complete or reopen them, and delete them. Tasks are stored in SQL Server LocalDB. The application creates the `CybersecurityBot` database and its `cybersecurity_tasks` table on first use.
 
-Install SQL Server Express LocalDB if it is not already available on your computer. The app uses the `(localdb)\\MSSQLLocalDB` instance with Windows authentication, so no MySQL server, connection string, or database password is needed. The Windows account running the app must be allowed to create a local database.
-
 ## Part 3 Task 2: cybersecurity mini-game
 
 Click **Quiz** in the chatbot to start a 12-question quiz. Questions cover phishing, passwords, safe browsing, multi-factor authentication, privacy, social engineering, public Wi-Fi, and device updates. Multiple-choice and true/false questions appear one at a time. Each answer receives immediate feedback with an explanation, followed by a final score and performance message. Choose **Play again** to restart.
 
 ## Part 3 Task 3: NLP simulation
 
-The chat input uses basic NLP simulation with text normalization, keyword and phrase matching, and regular expressions for flexible task/reminder requests and reminder timeframes. Try `Remind me to update my password tomorrow`, `Add a task to enable 2FA`, `in 3 days`, `quiz me`, or `What have you done for me?`. Task requests are saved to SQL Server LocalDB, reminder replies update the saved task, quiz phrases open the mini-game, and recent chatbot actions are summarized in the conversation. This is rule-based string processing, not a trained language model.
+The chat input uses basic NLP simulation with text normalization, keyword and phrase matching, and regular expressions for flexible task/reminder requests and reminder timeframes. Try `Remind me to update my password tomorrow`, `Add a task to enable 2FA`, `in 3 days`, `quiz me`, or `What have you done for me?`. Task requests are saved to SQL Server LocalDB, reminder replies update the saved task, quiz phrases open the mini-game, and recent chatbot actions are summarized in the conversation.
 
 ## Part 3 Task 4: activity log
 
