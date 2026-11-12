@@ -2,6 +2,8 @@ namespace CybersecurityBot;
 
 internal sealed class CybersecurityQuizForm : Form
 {
+    public event Action<int>? QuizCompleted;
+    private bool _completionReported;
     private static readonly IReadOnlyList<QuizQuestion> Questions =
     [
         new("What should you do if an unexpected email asks for your password?", ["Reply with your password", "Report it as phishing", "Send a photo of your ID", "Forward it to friends"], 1, "Legitimate services should not ask you to send your password by email. Report the message through the service's official channel."),
@@ -174,6 +176,11 @@ internal sealed class CybersecurityQuizForm : Form
 
     private void ShowFinalScore()
     {
+        if (!_completionReported)
+        {
+            _completionReported = true;
+            QuizCompleted?.Invoke(_score);
+        }
         _questionLabel.Text = $"Quiz complete! You scored {_score} out of {Questions.Count}.";
         _progressLabel.Text = "Final score";
         _answerPanel.Controls.Clear();

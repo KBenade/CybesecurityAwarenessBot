@@ -8,7 +8,7 @@ internal sealed class MainForm : Form
     private readonly NaturalLanguageProcessor _nlp = new();
     private readonly VoiceGreeting _voiceGreeting = new();
     private readonly FlowLayoutPanel _conversationPanel;
-    private readonly List<string> _recentActions = [];
+    private readonly List<ActivityEntry> _recentActions = [];
     private SqlServerTaskRepository? _taskRepository;
     private int? _pendingReminderTaskId;
     private string? _pendingReminderTitle;
@@ -266,6 +266,10 @@ internal sealed class MainForm : Form
 
         string response = _chatbot.GetResponse(message);
         AddBotMessage(response);
+        if (!response.StartsWith("I did not quite understand", StringComparison.Ordinal))
+        {
+            RecordAction($"NLP response provided for: {message}");
+        }
         _statusLabel.Text = "Response added";
     }
 
@@ -275,7 +279,7 @@ internal sealed class MainForm : Form
         {
             string summary = _recentActions.Count == 0
                 ? "I have not added a task, set a reminder, or started a quiz in this chat yet."
-                : "Here is a summary of recent actions:\n" + string.Join("\n", _recentActions.TakeLast(10).Select((action, index) => $"{index + 1}. {action}"));
+                : "Here is a summary of recent actions:\n" + string.Join("\n", _recentActions.TakeLast(10).Select((entry, index) => $"{index + 1}. [{entry.Timestamp:dd MMM HH:mm}] {entry.Description}"));
             AddBotMessage(summary);
             _statusLabel.Text = "Activity summary";
             return true;
@@ -398,7 +402,7 @@ internal sealed class MainForm : Form
 
     private void RecordAction(string action)
     {
-        _recentActions.Add(action);
+        _recentActions.Add(new ActivityEntry(DateTime.Now, action));
         if (_recentActions.Count > 10) _recentActions.RemoveAt(0);
     }
 
@@ -407,6 +411,7 @@ internal sealed class MainForm : Form
         try
         {
             using var taskManager = new TaskManagerForm();
+            taskManager.ActivityRecorded += RecordAction;
             taskManager.ShowDialog(this);
         }
         catch (Exception ex)
@@ -419,8 +424,11 @@ internal sealed class MainForm : Form
     private void OpenQuiz()
     {
         using var quiz = new CybersecurityQuizForm();
+        quiz.QuizCompleted += score => RecordAction($"Cybersecurity quiz completed: {score} out of 12.");
         quiz.ShowDialog(this);
     }
+
+    private sealed record ActivityEntry(DateTime Timestamp, string Description);
 
     private void AddBotMessage(string message) => AddMessage("Bot", message, Color.FromArgb(35, 77, 71), Color.White, ContentAlignment.MiddleLeft);
 

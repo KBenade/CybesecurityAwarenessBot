@@ -2,6 +2,8 @@ namespace CybersecurityBot;
 
 internal sealed class TaskManagerForm : Form
 {
+    public event Action<string>? ActivityRecorded;
+
     private readonly SqlServerTaskRepository _repository;
     private readonly DataGridView _tasksGrid = new();
     private readonly TextBox _titleInput = new();
@@ -157,6 +159,9 @@ internal sealed class TaskManagerForm : Form
         RunDatabaseAction(() =>
         {
             _repository.Add(title, description, _reminderEnabled.Checked ? _reminderInput.Value : null);
+            ActivityRecorded?.Invoke($"Task added: {title}.");
+            if (_reminderEnabled.Checked)
+                ActivityRecorded?.Invoke($"Reminder set for '{title}' on {_reminderInput.Value:dd MMM yyyy HH:mm}.");
             _titleInput.Clear();
             _descriptionInput.Clear();
             _reminderEnabled.Checked = false;
@@ -171,6 +176,7 @@ internal sealed class TaskManagerForm : Form
         RunDatabaseAction(() =>
         {
             _repository.SetCompleted(task.Id, !task.IsCompleted);
+            ActivityRecorded?.Invoke(task.IsCompleted ? $"Task reopened: {task.Title}." : $"Task marked complete: {task.Title}.");
             RefreshTasks();
             SetStatus(task.IsCompleted ? "Task reopened." : "Task marked complete.");
         });
@@ -182,6 +188,7 @@ internal sealed class TaskManagerForm : Form
         RunDatabaseAction(() =>
         {
             _repository.Delete(task.Id);
+            ActivityRecorded?.Invoke($"Task deleted: {task.Title}.");
             RefreshTasks();
             SetStatus("Task deleted.");
         });

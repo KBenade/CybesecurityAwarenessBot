@@ -30,7 +30,10 @@ internal sealed class NaturalLanguageProcessor
             || text.Contains("what did you do", StringComparison.Ordinal)
             || text.Contains("recent actions", StringComparison.Ordinal)
             || text.Contains("actions so far", StringComparison.Ordinal)
-            || text.Contains("activity summary", StringComparison.Ordinal);
+            || text.Contains("activity summary", StringComparison.Ordinal)
+            || text.Contains("activity log", StringComparison.Ordinal)
+            || text.Contains("show activity", StringComparison.Ordinal)
+            || text.Contains("what have you done for me", StringComparison.Ordinal);
     }
 
     public bool TryParseTaskRequest(string input, out ParsedTaskRequest? request)

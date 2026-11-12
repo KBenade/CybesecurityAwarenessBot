@@ -51,6 +51,10 @@ Click **Quiz** in the chatbot to start a 12-question quiz. Questions cover phish
 
 The chat input uses basic NLP simulation with text normalization, keyword and phrase matching, and regular expressions for flexible task/reminder requests and reminder timeframes. Try `Remind me to update my password tomorrow`, `Add a task to enable 2FA`, `in 3 days`, `quiz me`, or `What have you done for me?`. Task requests are saved to SQL Server LocalDB, reminder replies update the saved task, quiz phrases open the mini-game, and recent chatbot actions are summarized in the conversation. This is rule-based string processing, not a trained language model.
 
+## Part 3 Task 4: activity log
+
+Ask `show activity log`, `what have you done for me?`, or `recent actions` to see up to ten recent actions with timestamps. The log records chat-created tasks and reminders, task manager additions, completions, reopenings and deletions, quiz starts and completed scores, and recognized cybersecurity responses.
+
 ## Continuous integration
 
 The GitHub Actions workflow in `.github/workflows/ci.yml` restores and builds the solution on every push and pull request. After pushing this repository to GitHub, the Actions tab will show each run.
